@@ -1,0 +1,21 @@
+{
+  "name": "مصروفي - متابعة المصروفات والميزانية الشخصية",
+  "short_name": "مصروفي",
+  "description": "تطبيق ذكي لتسجيل ومتابعة المصروفات اليومية والميزانية الشخصية.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#047857",
+  "theme_color": "#047857",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23005d42'/><text x='50' y='65' font-size='50' text-anchor='middle'>💰</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
