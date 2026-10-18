@@ -1707,29 +1707,58 @@
     document.getElementById('insight-body-text').textContent = item.body;
   }
 
-  function sendPushNotification(title, body) {
-    if ('vibrate' in navigator) navigator.vibrate([150, 80, 150]);
-    if ('Notification' in window && Notification.permission === 'granted') {
-      try {
-        new Notification(title, { body, dir: 'rtl' });
-        return;
-      } catch(e) {}
+  // دالة إرسال الإشعار الحقيقي إلى شريط إشعارات الهاتف والنظام
+async function sendPushNotification(title, body) {
+  // اهتزاز الهاتف عند وصول الإشعار
+  if ('vibrate' in navigator) navigator.vibrate([200, 100, 200]);
+
+  // 1. محاولة إرسال إشعار النظام عبر Service Worker (يعمل في شريط الإشعارات حتى عند إغلاق التطبيق)
+  if ('serviceWorker' in navigator) {
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      if (reg && 'showNotification' in reg) {
+        await reg.showNotification(title, {
+          body: body,
+          icon: './icon-192.png',
+          badge: './icon-192.png',
+          vibrate: [200, 100, 200],
+          tag: 'masroufi-alert',
+          renotify: true,
+          dir: 'rtl',
+          lang: 'ar'
+        });
+        return; // تم الإرسال لشريط إشعارات الهاتف بنجاح!
+      }
+    } catch (e) {
+      console.warn('تعذر الإرسال عبر Service Worker:', e);
     }
-    const toast = document.createElement('div');
-    toast.className = 'fixed top-4 left-4 right-4 z-50 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-xl flex items-center justify-between gap-3 text-xs transition duration-300';
-    toast.innerHTML = `
-      <div class="flex items-center gap-2">
-        <span class="text-base">🔔</span>
-        <div>
-          <strong class="block font-semibold">${title}</strong>
-          <span class="text-[11px] text-slate-300">${body}</span>
-        </div>
-      </div>
-      <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white text-xs">✕</button>
-    `;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.remove(); }, 4000);
   }
+
+  // 2. المحاولة عبر واجهة Notification العادية
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification(title, { body, dir: 'rtl' });
+      return;
+    } catch (e) {}
+  }
+
+  // 3. بديل داخلي في حال رفض الإذن فقط
+  const toast = document.createElement('div');
+  toast.className = 'fixed top-4 left-4 right-4 z-50 bg-slate-900/95 text-white p-3.5 rounded-2xl shadow-xl flex items-center justify-between gap-3 text-xs transition duration-300';
+  toast.innerHTML = `
+    <div class="flex items-center gap-2">
+      <span class="text-base">🔔</span>
+      <div>
+        <strong class="block font-semibold">${title}</strong>
+        <span class="text-[11px] text-slate-300">${body}</span>
+      </div>
+    </div>
+    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white text-xs">✕</button>
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 4000);
+}
+
 
   async function requestPhoneNotificationPermission() {
     if (!('Notification' in window)) {
