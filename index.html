@@ -337,11 +337,6 @@
 </select>
 </div>
 </div>
-<div class="bg-slate-100 p-1 rounded-2xl flex items-center">
-<button class="flex-1 py-1.5 text-xs font-medium rounded-xl transition text-slate-500" id="btn-period-weekly" onclick="setAnalyticsPeriod('weekly')">📅 تحليل أسبوعي</button>
-<button class="flex-1 py-1.5 text-xs font-semibold rounded-xl transition bg-white text-emerald-800 shadow-xs" id="btn-period-monthly" onclick="setAnalyticsPeriod('monthly')">📊 تحليل شهري شامل</button>
-</div>
-</div>
 <!-- Synchronized Breakdown Cards -->
 <div class="space-y-3">
 <div class="bg-white rounded-3xl p-4 border border-slate-200/60 shadow-xs space-y-3">
@@ -1753,5 +1748,18 @@
 
   // Initialize
   initApp();
+
+      // تسجيل الـ Service Worker للعمل أوفلاين على GitHub Pages
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => {
+          console.log('✅ تم تفعيل العمل أوفلاين بنجاح. النطاق:', registration.scope);
+        })
+        .catch((error) => {
+          console.error('❌ فشل تسجيل Service Worker:', error);
+        });
+    });
+  }
 </script>
 </div></body></html>
